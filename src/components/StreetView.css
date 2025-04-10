@@ -1,0 +1,392 @@
+/* src/components/StreetView.css */
+.street-view-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #333;
+  font-family: 'Roboto', sans-serif;
+}
+
+.street-view-header {
+  background-color: #041E42; /* PSU Navy Blue */
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.street-view-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.controls-panel {
+  background-color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.building-selector, .view-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+label {
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.button-group button {
+  background-color: #e2e8f0;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  position: relative;
+}
+
+.button-group button:hover:not(.disabled) {
+  background-color: #cbd5e0;
+}
+
+.button-group button.active {
+  background-color: #1565c0; /* PSU Blue */
+  color: white;
+}
+
+.button-group button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.view-status {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-complete {
+  background-color: #38a169; /* Green */
+}
+
+.status-progress {
+  background-color: #ecc94b; /* Yellow */
+}
+
+.status-planned {
+  background-color: #cbd5e0; /* Gray */
+}
+
+.map-link {
+  background-color: #041E42; /* PSU Navy */
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.map-link:hover {
+  background-color: #1565c0; /* PSU Blue */
+}
+
+.viewer-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #e5e5e5;
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 2rem 1rem;
+}
+
+.image-navigation {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.location-image {
+  max-width: 100%;
+  max-height: 60vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  object-fit: contain;
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(4, 30, 66, 0.7); /* Semi-transparent PSU Navy */
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.nav-button:hover {
+  background-color: rgba(21, 101, 192, 0.9); /* PSU Blue */
+}
+
+.nav-button.prev {
+  left: 10px;
+}
+
+.nav-button.next {
+  right: 10px;
+}
+
+.image-description {
+  background-color: white;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-description h3 {
+  color: #041E42; /* PSU Navy */
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.image-description h3 span {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.image-description p {
+  margin: 0;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.coming-soon-info {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #fffde7;
+  border-left: 4px solid #fbc02d;
+  font-size: 0.9rem;
+}
+
+.coming-soon-info p {
+  margin: 0 0 0.5rem 0;
+  color: #5d4037;
+}
+
+.coming-soon-info .progress-note {
+  font-size: 0.8rem;
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+.implementation-status {
+  background-color: white;
+  padding: 1.5rem;
+  margin: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.implementation-status h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #041E42;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.status-label {
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.status-bar {
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.status-filled {
+  height: 100%;
+  background-color: #1565c0; /* PSU Blue */
+}
+
+.status-percentage {
+  font-size: 0.8rem;
+  color: #666;
+  text-align: right;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 5;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(4, 30, 66, 0.1); /* Light PSU Navy */
+  border-radius: 50%;
+  border-top-color: #1565c0; /* PSU Blue */
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.street-view-footer {
+  text-align: center;
+  padding: 0.75rem;
+  background-color: #041E42; /* PSU Navy */
+  color: white;
+  font-size: 0.875rem;
+}
+
+.footer-link {
+  color: #90caf9;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #bbdefb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .street-view-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .controls-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+  
+  .map-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  
+  .image-description {
+    max-width: 100%;
+  }
+  
+  .nav-button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .building-selector, .view-selector {
+    width: 100%;
+  }
+  
+  .button-group {
+    justify-content: center;
+  }
+  
+  .implementation-status {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .nav-button {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .image-description h3 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}

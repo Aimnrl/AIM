@@ -1,0 +1,239 @@
+/* src/components/Map.css */
+.map-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: 'Roboto', sans-serif;
+}
+
+.map-header {
+  background-color: #041E42; /* PSU Navy Blue */
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.back-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.map-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-form {
+  display: flex;
+  flex: 1;
+  max-width: 600px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px 0 0 4px;
+  font-size: 1rem;
+}
+
+.search-button {
+  background-color: #1565c0; /* PSU Blue */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 4px 4px 0;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #0d47a1;
+}
+
+.street-view-button {
+  background-color: #041E42; /* PSU Navy */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.street-view-button:hover {
+  background-color: #1565c0; /* PSU Blue */
+}
+
+.navigation-info {
+  background-color: white;
+  padding: 1.5rem;
+  margin: 0 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.navigation-info h3 {
+  color: #041E42; /* PSU Navy */
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.travel-details {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.travel-time, .travel-distance {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-icon {
+  font-size: 1.5rem;
+}
+
+.map-display {
+  flex: 1;
+  position: relative;
+  margin: 1rem;
+  background-color: #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.map-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  font-size: 1.25rem;
+  color: #4a5568;
+}
+
+.map-footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #041E42; /* PSU Navy */
+  color: white;
+  font-size: 0.875rem;
+}
+
+.footer-link {
+  color: #90caf9;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #bbdefb;
+}
+
+/* Mapbox popup custom styles */
+.mapboxgl-popup-content {
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.mapboxgl-popup-content h3 {
+  margin: 0 0 8px 0;
+  color: #041E42;
+  font-size: 16px;
+}
+
+.mapboxgl-popup-content p {
+  margin: 0 0 10px 0;
+  color: #4a5568;
+}
+
+.popup-button {
+  background-color: #1565c0;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.popup-button:hover {
+  background-color: #0d47a1;
+}
+
+/* Feature coming soon indicator */
+.feature-coming-soon {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background-color: #fffde7;
+  border-left: 4px solid #fbc02d;
+  font-size: 0.9rem;
+  color: #5d4037;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .map-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .search-form {
+    max-width: none;
+  }
+  
+  .street-view-button {
+    text-align: center;
+  }
+  
+  .map-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .travel-details {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

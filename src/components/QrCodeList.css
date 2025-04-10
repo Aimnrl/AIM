@@ -1,0 +1,60 @@
+/* src/components/QrCodeList.css */
+.qr-code-list-container {
+  padding: 2rem;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+.qr-code-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.qr-code-list-item {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background-color: #f8fafc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.qr-code-list-item span {
+  font-size: 1rem;
+  color: #041E42;
+}
+
+.qr-code-list-item button {
+  background-color: #041E42;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.qr-code-list-item button:hover {
+  background-color: #1565c0;
+}
+
+.home-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  text-decoration: none;
+  color: #1565c0;
+  border: 1px solid #1565c0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.home-link:hover {
+  background-color: #1565c0;
+  color: #fff;
+}
+
