@@ -151,11 +151,23 @@ class FloorViewer:
         self.floors = floors
         self.building_map = building_map
         self.floor_keys = sorted(floors.keys())
-        self.index = 0
+        self.index = 0  # current floor view index
+        # Navigation index to step through the path
+        self.nav_index = 0
+        # Initial facing direction: facing north/up (π/2)
+        self.current_facing = math.pi / 2
+
         self.fig, self.ax = plt.subplots(figsize=(11, 7))
-        self.button_ax = self.fig.add_axes([0.85, 0.01, 0.1, 0.05])
-        self.button = Button(self.button_ax, "Next Floor")
-        self.button.on_clicked(self.next_floor)
+        # Button to switch floors.
+        self.floor_button_ax = self.fig.add_axes([0.85, 0.01, 0.1, 0.05])
+        self.floor_button = Button(self.floor_button_ax, "Next Floor")
+        self.floor_button.on_clicked(self.next_floor)
+        # Button to step to the next navigation instruction.
+        self.instr_button_ax = self.fig.add_axes([0.70, 0.01, 0.1, 0.05])
+        self.instr_button = Button(self.instr_button_ax, "Next Instruction")
+        self.instr_button.on_clicked(self.next_instruction)
+
+        # Initial draw on the current floor.
         self.show_floor(self.floor_keys[self.index])
         plt.show()
 
@@ -165,7 +177,63 @@ class FloorViewer:
         self.show_floor(self.floor_keys[self.index])
         self.fig.canvas.draw_idle()
 
-    def show_floor(self, z):
+    def next_instruction(self, event):
+        # If we've reached the destination, do nothing.
+        if self.nav_index >= len(self.path) - 1:
+            print("Navigation complete: You have reached your destination.")
+            return
+
+        current = self.path[self.nav_index]
+        next_step = self.path[self.nav_index + 1]
+        dz = next_step[2] - current[2]
+
+        # Handle vertical transitions.
+        if dz > 0:
+            instruction = f"Go up to floor {next_step[2]}"
+            # For vertical moves, we clear the facing (there is no arrow in the 2D view)
+            self.current_facing = None
+        elif dz < 0:
+            instruction = f"Go down to floor {next_step[2]}"
+            self.current_facing = None
+        else:
+            # For horizontal moves, compute new facing and relative instruction.
+            dx = next_step[0] - current[0]
+            dy = next_step[1] - current[1]
+            angle_next = math.atan2(dy, dx)
+            # Compute relative angle (using the global normalize_angle function)
+            relative_angle = normalize_angle(angle_next - self.current_facing)
+            relative_deg = math.degrees(relative_angle)
+            if abs(relative_deg) <= 22.5:
+                instruction = "Move forward"
+            elif 22.5 < relative_deg <= 67.5:
+                instruction = "Move forward left"
+            elif 67.5 < relative_deg <= 112.5:
+                instruction = "Move left"
+            elif 112.5 < relative_deg <= 157.5:
+                instruction = "Move backward left"
+            elif relative_deg > 157.5 or relative_deg <= -157.5:
+                instruction = "Move backward"
+            elif -67.5 >= relative_deg > -112.5:
+                instruction = "Move right"
+            elif -22.5 > relative_deg >= -67.5:
+                instruction = "Move forward right"
+            elif -112.5 >= relative_angle > -157.5:
+                instruction = "Move backward right"
+            else:
+                instruction = "Move in that direction"
+            # Update the facing to the new horizontal direction.
+            self.current_facing = angle_next
+
+        # Advance navigation index.
+        self.nav_index += 1
+        # Clear and redraw the current floor.
+        self.ax.clear()
+        self.show_floor(self.floor_keys[self.index], instruction=instruction)
+        self.fig.canvas.draw_idle()
+        print(f"Step {self.nav_index}: {instruction}")
+
+    def show_floor(self, z, instruction=None):
+        # Create the grid representation.
         width, height = self.floors[z]['width'], self.floors[z]['height']
         grid = np.zeros((height, width), dtype=int)
         for (ox, oy) in self.obstacles.get(z, {}):
@@ -173,20 +241,42 @@ class FloorViewer:
         for (x, y, f) in self.path:
             if f == z:
                 grid[y][x] = 2
+
         cmap = colors.ListedColormap(["#e8e8e8", "#001f3f", "#39cccc"])
         self.ax.imshow(grid, cmap=cmap, origin='lower')
         self.ax.set_title(f"Floor {z} - LAB 3 Blueprint View", fontsize=14, fontweight='bold')
         self.ax.set_xticks([])
         self.ax.set_yticks([])
+
+        # Plot room labels.
         shown = set()
         for (x, y, f), label in self.room_labels.items():
             if f == z and (x, y) not in self.obstacles[z] and (x, y) not in shown:
                 self.ax.plot(x, y, 'o', color='orange', markersize=3)
                 self.ax.text(x + 0.5, y + 0.5, label, fontsize=7, color='black')
                 shown.add((x, y))
+        # Indicate vertical connections (stairs) with an icon.
         for (sx, sy) in set((c['x'], c['y']) for c in self.building_map['vertical_connections'] if c['from'] == z):
             self.ax.text(sx, sy, "🪜", fontsize=12, ha='center', va='center', color='darkred')
 
+        # If the current navigation step is on this floor, draw the user’s arrow icon.
+        if self.nav_index < len(self.path):
+            curr_pos = self.path[self.nav_index]
+            if curr_pos[2] == z and self.current_facing is not None:
+                x_arrow = curr_pos[0] + 0.5  # Center in the cell.
+                y_arrow = curr_pos[1] + 0.5
+                # Draw a small arrow indicating the facing direction.
+                arrow_dx = 0.5 * math.cos(self.current_facing)
+                arrow_dy = 0.5 * math.sin(self.current_facing)
+                self.ax.arrow(x_arrow, y_arrow, arrow_dx, arrow_dy,
+                              head_width=0.3, head_length=0.3, fc='red', ec='red')
+
+        # Optionally display the current instruction as overlay text.
+        if instruction is not None:
+            self.ax.text(0.05, 0.95, f"Instruction: {instruction}",
+                         transform=self.ax.transAxes,
+                         fontsize=12, color='blue', verticalalignment='top',
+                         bbox=dict(facecolor='white', alpha=0.6))
 # --- Revised: 3D Map Viewer with Walls and Doors ---
 # --- Revised: 3D Map Viewer with Enhanced Room Label Readability ---
 class ThreeDMapViewer:
