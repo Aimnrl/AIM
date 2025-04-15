@@ -29,7 +29,7 @@ function Home() {
   return (
     <div className="home-container">
       <header className="home-header">
-        <h1>PSUca Campus Navigator</h1>
+        <h1>PSU Campus Navigator</h1>
         <p>Below are QR codes for each floor. Scan or click the button below each QR code for more details.</p>
         <br></br>
         <div className="faq-link-wrapper">
