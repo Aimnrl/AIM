@@ -303,3 +303,24 @@
 .floor-button:hover {
   background-color: #1565c0;
 }
+
+.back-button {
+  background-color: #ffffff;
+  color: #041E42; /* PSU Navy */
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+}
+
+.back-button:hover {
+  background-color: #1565c0; /* PSU Blue hover */
+}
+
+.faq-link-wrapper {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+}

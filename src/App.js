@@ -6,6 +6,7 @@ import Map from "./components/Map";
 import StreetView from "./components/StreetView";
 import QrCodeList from "./components/QrCodeList";
 import FloorQrCode from "./components/FloorQrCode";
+import FAQ from './components/FAQ';
 import "./App.css";
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
           <Route path="/floors/:floorParam" element={<FloorQrCode />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
+
+          <Route path="/faq" element={<FAQ />} />
+
         </Routes>
       </div>
     </Router>

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import './Home.css';
 
+import { Link } from 'react-router-dom';
+
 // Define the floors you want to display
 const floors = [
   { label: 'Woodland 1st Floor', value: 'woodland-1st' },
@@ -27,8 +29,12 @@ function Home() {
   return (
     <div className="home-container">
       <header className="home-header">
-        <h1>PSU Campus Navigator</h1>
+        <h1>PSUca Campus Navigator</h1>
         <p>Below are QR codes for each floor. Scan or click the button below each QR code for more details.</p>
+        <br></br>
+        <div className="faq-link-wrapper">
+          <Link to="/faq" className="back-button">FAQ</Link>
+        </div>
       </header>
 
       {/* NEW: Display all floor QR codes */}
