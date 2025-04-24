@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './StreetView.css';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 const StreetView = () => {
   const [loading, setLoading] = useState(true);
@@ -19,15 +20,17 @@ const StreetView = () => {
     Woodland: {
       floors: {
         '1': {
+          floorPlan: '/images/Woodland-1.jpg', desc: 'Woodland 1st Floor Marked Floor Plan',
           exterior: '/images/woodland-1st-exterior.jpg',
           description: 'Woodland 1st Floor – labs and offices.',
           hallways: [
-            { img: '/images/woodland-1st-hallway1.jpg', desc: 'Hallway near front entrance' },
+            { img: '/images/Woodland-1.jpg', desc: 'Hallway near front entrance' },
           ],
           stairs: [],
           entrances: [],
         },
         '2': {
+          floorPlan: '/images/Woodland-2.jpg', desc: 'Woodland 2nd Floor Marked Floor Plan',
           exterior: '/images/woodland-2nd-exterior.jpg',
           description: 'Woodland 2nd Floor – library and lounge.',
           hallways: [],
@@ -35,6 +38,7 @@ const StreetView = () => {
           entrances: [],
         },
         '3': {
+          floorPlan: '/images/Woodland-3.jpg', desc: 'Woodland 3rd Floor Marked Floor Plan',
           exterior: '/images/woodland-3rd-exterior.jpg',
           description: 'Woodland 3rd Floor – staff offices.',
           hallways: [],
@@ -45,7 +49,16 @@ const StreetView = () => {
     },
     Sutherland: {
       floors: {
+        'B': {
+          floorPlan: '/images/Sutherland-B.jpg', desc: 'Sutherland Basement Floor Marked Floor Plan',
+          exterior: '/images/sutherland-1st-exterior.jpg',
+          description: 'Sutherland 1st Floor – main lobby.',
+          hallways: [],
+          stairs: [],
+          entrances: [], 
+        },
         '1': {
+          floorPlan: '/images/Sutherland-1.jpg', desc: 'Sutherland 1st Floor Marked Floor Plan',
           exterior: '/images/sutherland-1st-exterior.jpg',
           description: 'Sutherland 1st Floor – main lobby.',
           hallways: [],
@@ -53,6 +66,7 @@ const StreetView = () => {
           entrances: [],
         },
         '2': {
+          floorPlan: '/images/Sutherland-2.jpg', desc: 'Sutherland 2nd Floor Marked Floor Plan',
           exterior: '/images/sutherland-2nd-exterior.jpg',
           description: 'Sutherland 2nd Floor – classrooms.',
           hallways: [],
@@ -60,6 +74,7 @@ const StreetView = () => {
           entrances: [],
         },
         '3': {
+          floorPlan: '/images/Sutherland-3.jpg', desc: 'Sutherland 3rd Floor Marked Floor Plan',
           exterior: '/images/sutherland-3rd-exterior.jpg',
           description: 'Sutherland 3rd Floor – advanced labs.',
           hallways: [],
@@ -71,6 +86,7 @@ const StreetView = () => {
     Rydal: {
       floors: {
         '1': {
+          floorPlan: '/images/Rydal-1.jpg', desc: 'Rydal 1st Floor Marked Floor Plan',
           exterior: '/images/rydal-1st-exterior.jpg',
           description: 'Rydal 1st Floor – lounge area.',
           hallways: [],
@@ -78,6 +94,7 @@ const StreetView = () => {
           entrances: [],
         },
         '2': {
+          floorPlan: '/images/Rydal-2.jpg', desc: 'Rydal 2nd Floor Marked Floor Plan',
           exterior: '/images/rydal-2nd-exterior.jpg',
           description: 'Rydal 2nd Floor – offices, smaller labs.',
           hallways: [],
@@ -135,36 +152,44 @@ const StreetView = () => {
 
   // Each time building/floor/viewType changes, pick an image
   useEffect(() => {
-    // If "exterior", just pick the exterior
-    if (viewType === 'exterior') {
-      setCurrentImage(
-        buildingData[currentBuilding].floors[currentFloor].exterior || null
-      );
+  if (viewType === 'exterior') {
+    setCurrentImage(
+      buildingData[currentBuilding].floors[currentFloor].exterior || null
+    );
+  } else if (viewType === 'floorplan') {
+    setCurrentImage(
+      buildingData[currentBuilding].floors[currentFloor].floorPlan || null
+    );
+  } else {
+    const arr = buildingData[currentBuilding].floors[currentFloor][viewType];
+    if (arr && arr.length > 0) {
+      setCurrentImage(arr[0].img);
     } else {
-      // e.g. hallways, stairs, entrances
-      const arr = buildingData[currentBuilding].floors[currentFloor][viewType];
-      if (arr && arr.length > 0) {
-        setCurrentImage(arr[0].img);
-      } else {
-        setCurrentImage(null);
-      }
+      setCurrentImage(null);
     }
-  }, [currentBuilding, currentFloor, viewType]);
+  }
+}, [currentBuilding, currentFloor, viewType]);
+  
 
-  const getCurrentDescription = () => {
-    if (viewType === 'exterior') {
-      return (
-        buildingData[currentBuilding].floors[currentFloor].description || ''
-      );
-    } else {
-      const arr =
-        buildingData[currentBuilding].floors[currentFloor][viewType] || [];
-      if (arr.length > 0) {
-        return arr[currentIndex].desc;
-      }
-      return '';
+const getCurrentDescription = () => {
+  if (viewType === 'exterior') {
+    return (
+      buildingData[currentBuilding].floors[currentFloor].description || ''
+    );
+  } else if (viewType === 'floorplan') {
+    return (
+      buildingData[currentBuilding].floors[currentFloor].desc || 'Floor plan'
+    );
+  } else {
+    const arr =
+      buildingData[currentBuilding].floors[currentFloor][viewType] || [];
+    if (arr.length > 0) {
+      return arr[currentIndex].desc;
     }
-  };
+    return '';
+  }
+};
+
 
   const navigateImages = (direction) => {
     if (viewType === 'exterior') return;
@@ -218,7 +243,14 @@ const StreetView = () => {
         <div className="floor-selector">
           <label>Floor:</label>
           <div className="button-group">
-            {availableFloors.map((fNum) => (
+          {[...availableFloors]
+            .sort((a, b) => {
+              if (a === 'B') return -1; // Always place "B" at the top
+              if (b === 'B') return 1;
+              return parseInt(a) - parseInt(b); // Then sort "1", "2", "3" numerically
+            })
+            .map((fNum) => (
+
               <button
                 key={fNum}
                 onClick={() => {
@@ -235,34 +267,41 @@ const StreetView = () => {
 
         {/* View Type Selector */}
         <div className="view-selector">
-          <label>View Type:</label>
-          <div className="button-group">
-            <button
-              onClick={() => setViewType('exterior')}
-              className={viewType === 'exterior' ? 'active' : ''}
-            >
-              Exterior
-            </button>
-            <button
-              onClick={() => setViewType('hallways')}
-              className={viewType === 'hallways' ? 'active' : ''}
-            >
-              Hallways
-            </button>
-            <button
-              onClick={() => setViewType('stairs')}
-              className={viewType === 'stairs' ? 'active' : ''}
-            >
-              Stairs
-            </button>
-            <button
-              onClick={() => setViewType('entrances')}
-              className={viewType === 'entrances' ? 'active' : ''}
-            >
-              Entrances
-            </button>
-          </div>
+        <label>View Type:</label>
+        <div className="button-group">
+          <button
+            onClick={() => setViewType('floorplan')}
+            className={viewType === 'floorplan' ? 'active' : ''}
+          >
+            Floor Plan
+          </button>
+          <button
+            onClick={() => setViewType('exterior')}
+            className={viewType === 'exterior' ? 'active' : ''}
+          >
+            Exterior
+          </button>
+          <button
+            onClick={() => setViewType('hallways')}
+            className={viewType === 'hallways' ? 'active' : ''}
+          >
+            Hallways
+          </button>
+          <button
+            onClick={() => setViewType('stairs')}
+            className={viewType === 'stairs' ? 'active' : ''}
+          >
+            Stairs
+          </button>
+          <button
+            onClick={() => setViewType('entrances')}
+            className={viewType === 'entrances' ? 'active' : ''}
+          >
+            Entrances
+          </button>
         </div>
+      </div>
+
 
         <Link to="/map" className="map-link">
           Return to Campus Map
@@ -293,16 +332,27 @@ const StreetView = () => {
                 </button>
               )}
 
-              <img
-                src={currentImage}
-                alt={`${currentBuilding} Floor ${currentFloor} - ${viewType}`}
-                className="location-image"
-                onError={(e) => {
-                  // fallback placeholder if image fails
-                  e.target.src =
-                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDgwMCA2MDAiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNvbnRlbnQgeD0iMCIgeT0iMCIgIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjZjBmMGYwIi8+PGV0Yy8+PC9zdmc+';
-                }}
-              />
+              <TransformWrapper
+                doubleClick={{ mode: "zoomIn" }}
+                pinch={{ disabled: false }}
+                wheel={{ disabled: true }}
+                pan={{ disabled: false }}
+                zoomAnimation={{ animationTime: 300 }}
+              >
+                <TransformComponent>
+                  <img
+                    src={currentImage}
+                    alt={`${currentBuilding} Floor ${currentFloor} - ${viewType}`}
+                    className="location-image"
+                    onError={(e) => {
+                      e.target.src =
+                        'data:image/svg+xml;base64,...'; // same fallback SVG
+                    }}
+                    style={{ width: '100%', height: 'auto', touchAction: 'none' }}
+                  />
+                </TransformComponent>
+              </TransformWrapper>
+
 
               {(viewType !== 'exterior' &&
                 (buildingData[currentBuilding].floors[currentFloor][viewType]
