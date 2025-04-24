@@ -1,12 +1,11 @@
 // src/components/Map.js
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
-import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions'; // Import Directions plugin
+import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
 import './Map.css';
-
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibWdyNTIyMiIsImEiOiJjbTc2ZXNpMGcwN3ZuMmxwemhwNm8wbGtkIn0.J_dUFY-gCI7HqbzWC9Gy_A';
 
@@ -32,7 +31,6 @@ const Map = () => {
     }
 
     try {
-      // Initialize map
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mgr5222/cm9oev4nt00em01rz9tod2f7b',
@@ -42,10 +40,8 @@ const Map = () => {
         bearing: -17.6
       });
 
-      // Add navigation controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-      // Add directions control
       const directions = new MapboxDirections({
         accessToken: mapboxgl.accessToken,
         unit: 'metric',
@@ -53,36 +49,24 @@ const Map = () => {
       });
       map.current.addControl(directions, 'top-left');
 
-      // Fetch GeoJSON data dynamically
       fetch('/abington-entrances.geojson')
-        .then((response) => response.json())
+        .then((res) => res.json())
         .then((geojson) => {
-          // Add markers from GeoJSON data
-          for (const feature of geojson.features) {
+          geojson.features.forEach((feature) => {
             const marker = new mapboxgl.Marker({ color: '#FF0000' })
               .setLngLat(feature.geometry.coordinates)
-              .setPopup(
-                new mapboxgl.Popup().setHTML(`<h3>${feature.properties.location}</h3>`)
-              )
+              .setPopup(new mapboxgl.Popup().setHTML(`<h3>${feature.properties.location}</h3>`))
               .addTo(map.current);
 
-            // Add click event to marker
             marker.getElement().addEventListener('click', () => {
-              // Use Geolocation API to get user's current location
               if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                  (position) => {
-                    const userLocation = [
-                      position.coords.longitude,
-                      position.coords.latitude
-                    ];
-
-                    // Set the route from user's location to the marker
-                    directions.setOrigin(userLocation); // Starting point
-                    directions.setDestination(feature.geometry.coordinates); // Destination
+                  ({ coords }) => {
+                    directions.setOrigin([coords.longitude, coords.latitude]);
+                    directions.setDestination(feature.geometry.coordinates);
                   },
-                  (error) => {
-                    console.error('Error getting user location:', error);
+                  (err) => {
+                    console.error('Error getting user location:', err);
                     alert('Unable to access your location. Please enable location services.');
                   }
                 );
@@ -90,20 +74,14 @@ const Map = () => {
                 alert('Geolocation is not supported by your browser.');
               }
             });
-          }
+          });
         })
-        .catch((error) => {
-          console.error('Error loading GeoJSON:', error);
+        .catch((err) => {
+          console.error('Error loading GeoJSON:', err);
           setMapError('Failed to load GeoJSON data');
         });
 
-      // Map load event
-      map.current.on('load', () => {
-        console.log('Map loaded successfully');
-        setMapLoaded(true);
-      });
-
-      // Handle map load errors
+      map.current.on('load', () => setMapLoaded(true));
       map.current.on('error', (e) => {
         console.error('Map load error:', e);
         setMapError('Failed to load map');
@@ -113,17 +91,13 @@ const Map = () => {
       setMapError('Could not initialize map');
     }
 
-    // Cleanup on unmount
     return () => {
       if (map.current) map.current.remove();
     };
-  }, []);
+  }, [DEFAULT_LOCATION.lng, DEFAULT_LOCATION.lat]);
 
-  const viewInStreetView = () => {
-    navigate('/streetview');
-  };
+  const viewInStreetView = () => navigate('/streetview');
 
-  // If there's a map error, show error message
   if (mapError) {
     return (
       <div className="map-container">
@@ -145,7 +119,7 @@ const Map = () => {
         <h1>PSU Abington Campus Map</h1>
         <Link to="/" className="back-button">Back to Home</Link>
       </div>
-      
+
       <div className="map-controls">
         <form className="search-form">
           <input
@@ -155,20 +129,26 @@ const Map = () => {
           />
           <button type="submit" className="search-button">Find</button>
         </form>
-        
         <button onClick={viewInStreetView} className="street-view-button">
           View in Street View
         </button>
       </div>
-      
+
       <div ref={mapContainer} className="map-display">
         {!mapLoaded && <div className="map-loading">Loading map...</div>}
       </div>
-      
+
       <div className="map-footer">
         <p>
           PSU Abington Campus Navigator |{' '}
-          <a href="#" className="footer-link">Report an issue</a>
+          <a
+            href="https://github.com/your-org/your-repo/issues"
+            target="_blank"
+            rel="noopener"
+            className="footer-link"
+          >
+            Report an issue
+          </a>
         </p>
       </div>
     </div>
