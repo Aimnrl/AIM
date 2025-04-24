@@ -424,4 +424,27 @@ label {
     user-select: none;
     pointer-events: auto;
   }
+
+  button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .hallways-container {
+    display: flex;
+    flex-direction: column; /* Stack images vertically */
+    overflow-y: scroll;     /* Enable scrolling if there are many images */
+    max-height: 80vh;        /* Limit the height of the container */
+  }
+  
+  .hallway-image {
+    margin-bottom: 10px;
+  }
+  
+  .hallway-image img {
+    max-width: 100%;
+    height: auto;
+  }
+  
 }

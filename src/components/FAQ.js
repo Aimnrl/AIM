@@ -17,8 +17,8 @@ function FAQ() {
 
       <div className="faq-list">
         <div className="faq-item">
-          <h2 className="question">📍 How do I scan a QR code? 📍</h2>
-          <p className="answer">Open your phone’s camera or a QR scanner app and point it at the QR code. It should open the map for that floor automatically.</p>
+          <h2 className="question">📍 What are these QR Codes around campus? 📍</h2>
+          <p className="answer">Scanning one of our QR codes will take you straight to our StreetView page for that floor of that building.</p>
         </div>
 
         <div className="faq-item">
@@ -28,18 +28,23 @@ function FAQ() {
         </div>
 
         <div className="faq-item">
+          <h2 className="question">😡 Why are the StreetView Pictures Massive? 😡</h2>
+          <p className="answer">AIM is made for mobile devices, so it might not look the same on desktop!</p>
+        </div>
+
+        <div className="faq-item">
           <h2 className="question">🗺️ What is this app for? 🗺️</h2>
           <p className="answer">This app allows students and visitors to navigate campus buildings using QR codes that link to interactive floor maps.</p>
         </div>
 
         <div className="faq-item">
-          <h2 className="question">🏫 Which buildings are included? 🏫</h2>
+          <h2 className="question">🏫 Which building interiors are included? 🏫</h2>
           <p className="answer">Woodland, Sutherland, and Rydal buildings are currently supported, each with multiple floor views.</p>
         </div>
 
         <div className="faq-item">
-          <h2 className="question">❓ About Abington Interactive Map ❓</h2>
-          <p className="answer">Abington Interactive Map (AIM) is an interactive map application designed to assist new students at Penn State Abington in navigating the campus, specifically for classrooms and faculty offices.
+          <h2 className="question">❓ About AIM ❓</h2>
+          <p className="answer">Abington Interactive Map (AIM) is a mobile-first interactive map application designed to assist new students at Penn State Abington in navigating the campus, specifically for classrooms and faculty offices.
                 It was made for the CMPSC 487W Software Engineering course by Marco Isabella, Tao Geng, Marcos Ramirez, and Nirmal Nelson.
           </p>
         </div>
