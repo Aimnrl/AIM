@@ -389,4 +389,15 @@ label {
     align-items: flex-start;
     gap: 0.25rem;
   }
+
+  .image-container {
+    overflow: hidden;
+    max-height: 80vh; /* responsive sizing */
+  }
+  
+  .location-image {
+    max-width: 100%;
+    touch-action: none; /* Prevents weird gestures */
+  }
+  
 }
