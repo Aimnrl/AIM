@@ -1,5 +1,3 @@
-// src/components/StreetView.js
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './StreetView.css';
@@ -8,7 +6,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 const StreetView = () => {
   const location = useLocation();
 
-  // === full buildingData object (unchanged) ===
+  // === Full buildingData object ===
   const buildingData = {
     Woodland: {
       floors: {
@@ -65,7 +63,7 @@ const StreetView = () => {
     },
     Sutherland: {
       floors: {
-        'B': {
+        B: {
           floorPlan: '/images/Sutherland-B.jpg',
           desc: 'Sutherland Basement Floor Marked Floor Plan',
           description: 'Sutherland Basement – stairs and utilities.',
@@ -131,34 +129,29 @@ const StreetView = () => {
     },
   };
 
-  // Get all building names
+  // Helpers for building and floor keys
   const buildingNames = Object.keys(buildingData);
-
-  // Determine a safe default building and floor
   const defaultBuilding = buildingData.Woodland ? 'Woodland' : buildingNames[0];
-  const defaultFloors   = Object.keys(buildingData[defaultBuilding]?.floors || {});
+  const defaultFloors = Object.keys(buildingData[defaultBuilding]?.floors || {});
 
   // State hooks
-  const [loading, setLoading]           = useState(true);
+  const [loading, setLoading] = useState(true);
   const [currentBuilding, setCurrentBuilding] = useState(defaultBuilding);
-  const [currentFloor, setCurrentFloor]       = useState(defaultFloors[0] || '');
-  const [viewType, setViewType]         = useState('exterior');
+  const [currentFloor, setCurrentFloor] = useState(defaultFloors[0] || '');
+  const [viewType, setViewType] = useState('exterior');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentImage, setCurrentImage] = useState(null);
 
-  // Recompute availableFloors safely whenever building changes
-  const availableFloors = Object.keys(
-    buildingData[currentBuilding]?.floors || {}
-  );
+  // Recompute floors whenever building changes, safely
+  const availableFloors = Object.keys(buildingData[currentBuilding]?.floors || {});
 
-  // Read ?building from URL on initial load
+  // On URL change, set building from ?building=
   useEffect(() => {
     setLoading(true);
     setCurrentIndex(0);
 
-    const params        = new URLSearchParams(location.search);
+    const params = new URLSearchParams(location.search);
     const buildingParam = params.get('building');
-
     if (buildingParam && buildingNames.includes(buildingParam)) {
       setCurrentBuilding(buildingParam);
     }
@@ -166,11 +159,10 @@ const StreetView = () => {
     setTimeout(() => setLoading(false), 400);
   }, [location, buildingNames]);
 
-  // After building changes, pick up ?floor if valid
+  // When building or URL changes, set floor from ?floor=
   useEffect(() => {
-    const params     = new URLSearchParams(location.search);
+    const params = new URLSearchParams(location.search);
     const floorParam = params.get('floor');
-
     if (floorParam && availableFloors.includes(floorParam)) {
       setCurrentFloor(floorParam);
     } else if (!availableFloors.includes(currentFloor)) {
@@ -178,26 +170,282 @@ const StreetView = () => {
     }
   }, [currentBuilding, location, availableFloors, currentFloor]);
 
-  // Each time building/floor/viewType changes, pick an image
+  // Pick an image whenever building/floor/viewType change
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (viewType === 'floorplan') {
-      setCurrentImage(buildingData[currentBuilding].floors[currentFloor].floorPlan || null);
+      setCurrentImage(
+        buildingData[currentBuilding].floors[currentFloor].floorPlan || null
+      );
     } else if (viewType !== 'exterior') {
-      const arr = buildingData[currentBuilding].floors[currentFloor][viewType] || [];
+      const arr =
+        buildingData[currentBuilding].floors[currentFloor][viewType] || [];
       setCurrentImage(arr.length > 0 ? arr[0].img : null);
     } else {
+      // exterior view handled in JSX
       setCurrentImage(null);
     }
   }, [currentBuilding, currentFloor, viewType]);
   /* eslint-enable react-hooks/exhaustive-deps */
 
-  // Helper functions and rendering logic stay the same...
-  // [ ... rest of your component code unchanged ... ]
+  const getCurrentDescription = () => {
+    if (viewType === 'exterior') {
+      return (
+        buildingData[currentBuilding].floors[currentFloor].description || ''
+      );
+    } else if (viewType === 'floorplan') {
+      return (
+        buildingData[currentBuilding].floors[currentFloor].desc || ''
+      );
+    }
+    const arr =
+      buildingData[currentBuilding].floors[currentFloor][viewType] || [];
+    return arr.length > 0 ? arr[currentIndex].desc : '';
+  };
+
+  const navigateImages = (direction) => {
+    const data = buildingData[currentBuilding].floors[currentFloor];
+    let arr = [];
+
+    if (viewType === 'exterior') {
+      const ext = data.exterior;
+      arr = Array.isArray(ext) ? ext.map((img) => ({ img })) : [];
+    } else {
+      arr = data[viewType] || [];
+    }
+
+    if (arr.length <= 1) return;
+
+    setLoading(true);
+    const newIndex =
+      direction === 'next'
+        ? (currentIndex + 1) % arr.length
+        : currentIndex === 0
+        ? arr.length - 1
+        : currentIndex - 1;
+
+    setCurrentIndex(newIndex);
+    setCurrentImage(arr[newIndex].img || arr[newIndex]);
+
+    setTimeout(() => setLoading(false), 400);
+  };
+
+  const hasEntrances = (() => {
+    const ext = buildingData[currentBuilding].floors[currentFloor].exterior;
+    return Array.isArray(ext) ? ext.length > 0 : !!ext;
+  })();
+
+  const hasHallways = (() => {
+    const h = buildingData[currentBuilding].floors[currentFloor].hallways;
+    return Array.isArray(h) && h.length > 0;
+  })();
 
   return (
     <div className="street-view-container">
-      {/* ... your existing JSX ... */}
+      <div className="street-view-header">
+        <h1>
+          {currentBuilding} – Floor {currentFloor}
+        </h1>
+        <Link to="/" className="back-button">
+          Back to Home
+        </Link>
+      </div>
+
+      <div className="controls-panel">
+        {/* Building Selector */}
+        <div className="building-selector">
+          <label>Building:</label>
+          <div className="button-group">
+            {buildingNames.map((bName) => (
+              <button
+                key={bName}
+                onClick={() => {
+                  setCurrentBuilding(bName);
+                  setCurrentFloor(
+                    Object.keys(buildingData[bName].floors)[0]
+                  );
+                  setViewType('floorplan');
+                }}
+                className={
+                  currentBuilding === bName ? 'active' : ''
+                }
+              >
+                {bName}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Floor Selector */}
+        <div className="floor-selector">
+          <label>Floor:</label>
+          <div className="button-group">
+            {[...availableFloors]
+              .sort((a, b) => {
+                if (a === 'B') return -1;
+                if (b === 'B') return 1;
+                return parseInt(a) - parseInt(b);
+              })
+              .map((fNum) => (
+                <button
+                  key={fNum}
+                  onClick={() => {
+                    setCurrentFloor(fNum);
+                    setViewType('floorplan');
+                  }}
+                  className={
+                    currentFloor === fNum ? 'active' : ''
+                  }
+                >
+                  {fNum}
+                </button>
+              ))}
+          </div>
+        </div>
+
+        {/* View Type Selector */}
+        <div className="view-selector">
+          <label>View Type:</label>
+          <div className="button-group">
+            <button
+              onClick={() => setViewType('floorplan')}
+              className={
+                viewType === 'floorplan' ? 'active' : ''
+              }
+            >
+              Floor Plan
+            </button>
+            <button
+              onClick={() => {
+                if (hasEntrances) setViewType('exterior');
+              }}
+              disabled={!hasEntrances}
+              className={
+                viewType === 'exterior' ? 'active' : ''
+              }
+            >
+              Entrances
+            </button>
+            <button
+              onClick={() => setViewType('hallways')}
+              disabled={!hasHallways}
+              className={
+                viewType === 'hallways' ? 'active' : ''
+              }
+            >
+              Hallways
+            </button>
+          </div>
+        </div>
+
+        <Link to="/map" className="map-link">
+          Return to Campus Map
+        </Link>
+      </div>
+
+      <div className="viewer-container">
+        {loading && (
+          <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+            <p>Loading view...</p>
+          </div>
+        )}
+
+        {viewType === 'exterior' ? (
+          <div className="multi-image-scroll">
+            {Array.isArray(
+              buildingData[currentBuilding].floors[currentFloor]
+                .exterior
+            ) ? (
+              buildingData[
+                currentBuilding
+              ].floors[currentFloor].exterior.map((imgSrc, idx) => (
+                <img
+                  key={idx}
+                  src={imgSrc}
+                  alt={`Entrance ${idx + 1}`}
+                  className="location-image"
+                />
+              ))
+            ) : (
+              <img
+                src={
+                  buildingData[currentBuilding].floors[
+                    currentFloor
+                  ].exterior
+                }
+                alt="Entrance"
+                className="location-image"
+              />
+            )}
+          </div>
+        ) : viewType === 'hallways' ? (
+          <div className="hallways-container">
+            {buildingData[currentBuilding].floors[
+              currentFloor
+            ].hallways.length > 0 ? (
+              buildingData[
+                currentBuilding
+              ].floors[currentFloor].hallways.map(
+                (hallway, index) => (
+                  <div
+                    key={index}
+                    className="hallway-image"
+                  >
+                    <img
+                      src={hallway.img}
+                      alt={hallway.desc}
+                    />
+                    <p>{hallway.desc}</p>
+                  </div>
+                )
+              )
+            ) : (
+              <p>No hallway images available</p>
+            )}
+          </div>
+        ) : currentImage ? (
+          <div className="image-navigation">
+            <button
+              className="nav-button prev"
+              onClick={() =>
+                navigateImages('prev')
+              }
+            >
+              ‹
+            </button>
+            <TransformWrapper>
+              <TransformComponent>
+                <img
+                  src={currentImage}
+                  alt={`${currentBuilding} Floor ${currentFloor} - ${viewType}`}
+                  className="location-image"
+                  onError={(e) => {
+                    e.target.src =
+                      'data:image/svg+xml;base64,...';
+                  }}
+                />
+              </TransformComponent>
+            </TransformWrapper>
+            <button
+              className="nav-button next"
+              onClick={() =>
+                navigateImages('next')
+              }
+            >
+              ›
+            </button>
+            <p className="image-desc">
+              {getCurrentDescription()}
+            </p>
+          </div>
+        ) : (
+          <div className="no-images-section">
+            <p>No images yet.</p>
+          </div>
+        )}
+      </div>
+
       <div className="street-view-footer">
         <p>
           PSU Abington Campus Navigator |{' '}
