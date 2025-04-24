@@ -1,0 +1,43 @@
+{
+    "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "location": "Woodland Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.11057837419872, 40.117047479133056]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location": "Lares Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.1092104476379, 40.11667416609587]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location": "Sutherland Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.10879202304284, 40.11586189548358]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location": "Rydal Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.11229230571315, 40.11591932907797]
+      }
+    }]}

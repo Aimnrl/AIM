@@ -2,25 +2,27 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
+import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions'; // Import Directions plugin
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
 import './Map.css';
 
 
-mapboxgl.accessToken = 'pk.eyJ1IjoicHVyZWJsYWNrZ3QiLCJhIjoiY204ZXBjY3h4MDN2djJqcTF3NzBzMzF1YiJ9.wqzDX9axunSDlWsdENGpCw';
+mapboxgl.accessToken = 'pk.eyJ1IjoibWdyNTIyMiIsImEiOiJjbTc2ZXNpMGcwN3ZuMmxwemhwNm8wbGtkIn0.J_dUFY-gCI7HqbzWC9Gy_A';
 
 const Map = () => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation();
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState(null);
 
   // Default location for PSU Abington
   const DEFAULT_LOCATION = {
-    lng: -75.1652,
-    lat: 40.1406,
-    name: 'PSU Abington'
+    lng: -75.10994916422415,
+    lat: 40.116222905939183,
+    name: 'PSU Abington',
+    zoom: 1000
   };
 
   useEffect(() => {
@@ -33,34 +35,72 @@ const Map = () => {
       // Initialize map
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12',
+        style: 'mapbox://styles/mgr5222/cm9oev4nt00em01rz9tod2f7b',
         center: [DEFAULT_LOCATION.lng, DEFAULT_LOCATION.lat],
-        zoom: 15
+        zoom: 18,
+        pitch: 45,
+        bearing: -17.6
       });
 
       // Add navigation controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      
-      // Add geolocate control
-      map.current.addControl(
-        new mapboxgl.GeolocateControl({
-          positionOptions: {
-            enableHighAccuracy: true
-          },
-          trackUserLocation: true
+
+      // Add directions control
+      const directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+        unit: 'metric',
+        profile: 'mapbox/walking'
+      });
+      map.current.addControl(directions, 'top-left');
+
+      // Fetch GeoJSON data dynamically
+      fetch('/abington-entrances.geojson')
+        .then((response) => response.json())
+        .then((geojson) => {
+          // Add markers from GeoJSON data
+          for (const feature of geojson.features) {
+            const marker = new mapboxgl.Marker({ color: '#FF0000' })
+              .setLngLat(feature.geometry.coordinates)
+              .setPopup(
+                new mapboxgl.Popup().setHTML(`<h3>${feature.properties.location}</h3>`)
+              )
+              .addTo(map.current);
+
+            // Add click event to marker
+            marker.getElement().addEventListener('click', () => {
+              // Use Geolocation API to get user's current location
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                  (position) => {
+                    const userLocation = [
+                      position.coords.longitude,
+                      position.coords.latitude
+                    ];
+
+                    // Set the route from user's location to the marker
+                    directions.setOrigin(userLocation); // Starting point
+                    directions.setDestination(feature.geometry.coordinates); // Destination
+                  },
+                  (error) => {
+                    console.error('Error getting user location:', error);
+                    alert('Unable to access your location. Please enable location services.');
+                  }
+                );
+              } else {
+                alert('Geolocation is not supported by your browser.');
+              }
+            });
+          }
         })
-      );
+        .catch((error) => {
+          console.error('Error loading GeoJSON:', error);
+          setMapError('Failed to load GeoJSON data');
+        });
 
       // Map load event
       map.current.on('load', () => {
         console.log('Map loaded successfully');
         setMapLoaded(true);
-
-        // Add marker for PSU Abington
-        new mapboxgl.Marker({ color: '#041E42' })
-          .setLngLat([DEFAULT_LOCATION.lng, DEFAULT_LOCATION.lat])
-          .setPopup(new mapboxgl.Popup().setHTML(`<h3>${DEFAULT_LOCATION.name}</h3>`))
-          .addTo(map.current);
       });
 
       // Handle map load errors
@@ -68,7 +108,6 @@ const Map = () => {
         console.error('Map load error:', e);
         setMapError('Failed to load map');
       });
-
     } catch (error) {
       console.error('Map initialization error:', error);
       setMapError('Could not initialize map');
