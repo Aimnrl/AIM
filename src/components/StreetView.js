@@ -49,6 +49,14 @@ const StreetView = () => {
     },
     Sutherland: {
       floors: {
+        'B': {
+          floorPlan: '/images/Sutherland-B.jpg', desc: 'Sutherland Basement Floor Marked Floor Plan',
+          exterior: '/images/sutherland-1st-exterior.jpg',
+          description: 'Sutherland 1st Floor – main lobby.',
+          hallways: [],
+          stairs: [],
+          entrances: [], 
+        },
         '1': {
           floorPlan: '/images/Sutherland-1.jpg', desc: 'Sutherland 1st Floor Marked Floor Plan',
           exterior: '/images/sutherland-1st-exterior.jpg',
@@ -235,7 +243,14 @@ const getCurrentDescription = () => {
         <div className="floor-selector">
           <label>Floor:</label>
           <div className="button-group">
-            {availableFloors.map((fNum) => (
+          {[...availableFloors]
+            .sort((a, b) => {
+              if (a === 'B') return -1; // Always place "B" at the top
+              if (b === 'B') return 1;
+              return parseInt(a) - parseInt(b); // Then sort "1", "2", "3" numerically
+            })
+            .map((fNum) => (
+
               <button
                 key={fNum}
                 onClick={() => {
