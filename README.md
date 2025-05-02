@@ -26,6 +26,8 @@ psu-campus-navigator/
 
 ## Installation
 
+Our app can be visited at https://abingtoninteractivemap.vercel.app or run locally:
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/Aimnrl/AIM
