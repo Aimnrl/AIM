@@ -28,8 +28,8 @@ psu-campus-navigator/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-org/psu-campus-navigator.git
-   cd psu-campus-navigator
+   git clone https://github.com/Aimnrl/AIM
+   cd AIM
 
 2. Install dependencies
 <code>npm install</code>
