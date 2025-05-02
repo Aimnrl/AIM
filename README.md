@@ -1,70 +1,64 @@
-# Getting Started with Create React App
+# PSU Campus Navigator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+PSU Campus Navigator is a React-based web application designed to help students and visitors navigate the Penn State Abington campus. The app provides interactive maps, QR code-based navigation, and StreetView functionality for various campus buildings and floors.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Interactive Map**: View the PSU Abington campus map with building markers and directions using Mapbox.
+- **QR Code Navigation**: Scan QR codes to access floor-specific maps and StreetView.
+- **StreetView**: Explore building interiors and hallways with zoom and pan functionality.
+- **Responsive Design**: Optimized for mobile devices but also functional on desktops.
+- **FAQ Section**: Provides helpful information about the app and campus navigation.
 
-### `npm start`
+## Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+psu-campus-navigator/
+├── public/                # Static files like index.html and icons
+├── src/                   # React components and assets
+│   ├── components/        # Reusable components
+│   ├── pages/             # Main pages of the app
+│   ├── utils/             # Utility functions
+│   └── App.js             # Main application component
+├── package.json           # Project metadata and dependencies
+└── README.md              # Project documentation
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-org/psu-campus-navigator.git
+   cd psu-campus-navigator
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install dependencies
+<code>npm install</code>
 
-### `npm run build`
+3. Start the development server:
+<code>npm start</code>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The app will be available at http://localhost:3000.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Usage:
+Interactive Map: Navigate to /map to view the campus map. Click on building markers to get directions.
+QR Code List: Visit /floors to select a floor and view its QR code.
+StreetView: Navigate to /streetview to explore building interiors and hallways.
+FAQ: Visit /faq for answers to common questions.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Dependencies:
+React
+React Router
+Mapbox GL JS
+QRCode.react
+React Zoom Pan Pinch
 
-### `npm run eject`
+Environment Variables:
+To use Mapbox, you need an access token. Replace the placeholder token in Map.js with <code>mapboxgl.accessToken = 'your-mapbox-access-token';</code>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Authors:
+Marco Isabella
+Tao Geng
+Marcos Ramirez
+Nirmal Nelson
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Developed as part of the CMPSC 487W Software Engineering course at Penn State Abington.
